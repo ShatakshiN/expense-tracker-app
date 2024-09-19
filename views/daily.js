@@ -124,7 +124,7 @@ function showExpenseOnScreen(obj){
     
         const parentElem = document.getElementById('expenseList');
         const childElem = document.createElement('li');
-        childElem.textContent = `${obj.description} - ${obj.amount}`;
+        childElem.textContent = `${obj.description} - ${obj.amount} - ${obj.date}`;
         const delButton  = document.createElement('button');
         childElem.className = "list-group-item";
         delButton.textContent = 'DELETE';
