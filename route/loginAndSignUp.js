@@ -14,26 +14,25 @@ function isStrValid(str) {
 };
 
 
-router.post('/signUp', async (req, res, next) => {
+router.post('/signUp', async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        console.log('backend', { name, email, password });
 
-        if (isStrValid(email) || isStrValid(name) || isStrValid(password)) {
-            return res.status(400).json({ err: "bad parameter" });
+        if (isStrValid(name) || isStrValid(email) || isStrValid(password)) {
+            return res.status(400).json({ error: "Missing fields" });
         }
 
-        // Check if the email already exists
-        const existingUser = await Users.findOne({ where: { email } });
+        const existingUser = await Users.findOne({ email });
+
         if (existingUser) {
-            return res.status(400).json({ message: "user already exists" });
+            return res.status(400).json({ message: "User already exists" });
         }
 
-        bcrypt.hash(password, 10, async (error, hash) => { 
-            await Users.create({ name, email, passWord: hash });
-        });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new Users({ name, email, password: hashedPassword });
+        await newUser.save();
 
-        return res.status(201).json({ msg: "sign up successful" });
+        return res.status(201).json({ message: "Sign up successful" });
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
@@ -43,35 +42,32 @@ function generateAccessToken(id) {
     return jwt.sign({ userId: id }, process.env.JWT_SECRET);
 }
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
         if (isStrValid(email) || isStrValid(password)) {
-            return res.status(400).json({ message: "bad parameters" });
+            return res.status(400).json({ message: "Missing email or password" });
         }
 
-        const loginCredentials = await Users.findAll({ where: { email } });
+        const user = await Users.findOne({ email });
 
-        if (loginCredentials.length > 0) {
-            bcrypt.compare(password, loginCredentials[0].passWord, (err, result) => {
-                if (err) {
-                    res.status(500).json({ msg: "something went wrong" });
-                }
-                if (result === true) {
-                    res.status(200).json({ msg: "user logged in successfully", token: generateAccessToken(loginCredentials[0].id) });
-                } else {
-                    return res.status(400).json({ msg: 'password incorrect' });
-                }
-            });
-        } else {
-            return res.status(404).json({ msg: "user doesn't exist" });
+        if (!user) {
+            return res.status(404).json({ message: "User doesn't exist" });
         }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: "Incorrect password" });
+        }
+
+        const token = generateAccessToken(user._id);
+        return res.status(200).json({ message: "Login successful", token });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 });
-
 
 
 module.exports = router;
