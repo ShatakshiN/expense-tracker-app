@@ -124,14 +124,14 @@ function showExpenseOnScreen(obj){
     
         const parentElem = document.getElementById('expenseList');
         const childElem = document.createElement('li');
-        childElem.textContent = `${obj.description} - ${obj.amount} - ${obj.date}`;
+        childElem.textContent = `${obj.description} - ${obj.amount} `;
         const delButton  = document.createElement('button');
         childElem.className = "list-group-item";
         delButton.textContent = 'DELETE';
         delButton.addEventListener('click', async () => {
             const token = localStorage.getItem('token');
             try {
-                await axios.delete(`http://localhost:4000/delete-expense/${obj.id}`, {
+                await axios.delete(`http://localhost:4000/delete-expense/${obj._id}`, {
                     headers: { 'Authorization': token }
                 });
                 // If successful, remove the expense item from the DOM
@@ -174,7 +174,7 @@ function displayExpenses() {
         delButton.addEventListener('click', async () => {
             const token = localStorage.getItem('token');
             try {
-                await axios.delete(`http://localhost:4000/delete-expense/${expense.id}`, {
+                await axios.delete(`http://localhost:4000/delete-expense/${expense._id}`, {
                     headers: { 'Authorization': token }
                 });
                 // If successful, remove the expense item from the DOM
