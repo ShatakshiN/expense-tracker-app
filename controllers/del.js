@@ -6,7 +6,7 @@ const middleware = require('../middleware/auth');
 // Mongoose Expense model
 const Expense = require('../models/expense');
 
-exports.delete = async(req,res,next) =>{
+exports.deleteExp = async(req,res,next) =>{
   try {
         const expenseId = req.params.expenseId;
 
