@@ -3,7 +3,7 @@ const Razorpay = require('razorpay');
 const router = express.Router();
 require('dotenv').config();
 
-const middleware = require('../middleware/auth');
+
 const User = require('../models/users');
 const Order = require('../models/order');
 const Expense = require('../models/expense'); // For leaderboard
