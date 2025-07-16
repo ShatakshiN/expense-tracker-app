@@ -1,5 +1,7 @@
 const Expense = require('./models/expense');
 
+require('dotenv').config();
+
 exports.postDailyExp = async(req,res,next) =>{
   try{
         const description = req.body.description;
