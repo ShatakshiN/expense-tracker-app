@@ -108,4 +108,64 @@ exports.leaderBoard = async(req, res,next) =>{
         res.status(500).json({ message: "Failed to fetch leaderboard", error: err.message });
     }
 };
+function uploadToS3(data, fileName){
+    const BUCKET_NAME = "exptrackershatakshi";
+    const IAM_USER_KEY = process.env.AWS_ACCESS_KEY;
+    const IAM_USER_SECRET = process.env.AWS_SECRET_ACCESS_KEY;
+    const s3Client = new S3Client({
+        accessKeyId: IAM_USER_KEY,
+        secretAccessKey: IAM_USER_SECRET,
+    })
 
+    var params={
+        Bucket: BUCKET_NAME,
+        Key: fileName,
+        Body: data,
+        ACL: 'public-read'
+    }
+    return new Promise((resolve, reject)=>{
+        s3bucket.upload(new PutObjectCommand(params),(err,data)=>{
+            if(err){
+                console.log("Something is Wrong",err);
+                reject(err);
+            }
+            else{
+                console.log("Success", data);
+                resolve(s3Response.Location);
+            }
+        })
+
+    })
+exports.downloadExp  = async(req,res,next) =>{
+  const userId = req.user.id;
+    try{
+        const name= await req.user.name;
+        const random= Math.random();
+        const users = await Expense.findAll({where : {SignUpId : userId}});
+        console.log(users)
+        const stringifiedExpenses = JSON.stringify(users);
+        const fileName = `${name}_${random}.txt`;
+        const fileURL = await uploadToS3(stringifiedExpenses, fileName);
+        console.log(fileURL)
+        const data = await FileURL.create({
+            url : fileURL,
+            SignUpId : userId
+        })
+        res.status(200).json({fileURL, success:true})
+
+
+    }catch(error){
+        res.status(500).json({error : error.message})
+    }
+
+};
+
+exports.downloadedExpFiles = async(req,res,next) =>{
+  try {
+        const userId = req.user.id;
+        const files = await FileURL.findAll({ where: { SignUpId: userId } });
+        res.status(200).json(files);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
