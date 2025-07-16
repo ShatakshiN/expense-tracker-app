@@ -36,7 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Create a cell for the month
             const monthCell = document.createElement("td");
-            monthCell.textContent = new Date(expense.month).toLocaleString('default', { month: 'long', year: 'numeric' });
+            const validDate = new Date(`${expense._id}-01`);
+            monthCell.textContent = validDate.toLocaleString('default', { month: 'long', year: 'numeric' });
             row.appendChild(monthCell);
 
             // Create a cell for the total expense

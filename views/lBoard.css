@@ -10,7 +10,7 @@ svg.bi {
   }
 #leaderBoardTable{
     padding-top: 4rem;
-    background-color: rgba(11, 11, 11, 0.286);
+    background-color: rgba(250, 247, 247, 0.286);
     backdrop-filter: blur(20px);
     opacity: 0.5;
 }

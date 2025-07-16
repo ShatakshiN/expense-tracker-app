@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const expenseList = document.getElementById("yearExpense-list");
 
-    // Function to fetch and display monthly expenses
+    // Function to fetch and display yearly expenses
     async function fetchyearlyExpenses() {
         try {
             const token = localStorage.getItem("token");
@@ -34,9 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
         expenses.forEach(expense => {
             const row = document.createElement("tr");
 
-            // Create a cell for the month
+            // Create a cell for the year
             const yrCell = document.createElement("td");
-            yrCell.textContent = new Date(expense.year).toLocaleString('default', {  year: 'numeric' });
+            const validDate = new Date(`${expense._id}-01-01`);
+            yrCell.textContent = validDate.toLocaleString('default', { year: 'numeric' });
             row.appendChild(yrCell);
 
             // Create a cell for the total expense
