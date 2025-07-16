@@ -17,3 +17,4 @@ router.get('/yearly-expense', auth, expController.getYearlyExp);
 
 
 
+module.exports = router;
