@@ -35,7 +35,7 @@ exports.forgotPassword = async(req,res,next)=>{
         return res.status(500).json({ success: false, msg: "Internal server error" }); }
 };
 
-exportss.resetPaasword = async(req,res,next) =>{
+exportss.resetPassword = async(req,res,next) =>{
   const t = await sequelize.transaction();
     try {
         const { resetId } = req.params;
